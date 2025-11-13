@@ -1,0 +1,30 @@
+📊 Day 01 — Data Cleaning & Preprocessing
+
+Task Objective:
+Clean and prepare the Customer Personality Analysis dataset for further analysis.
+
+🧹 Steps Performed
+
+Loaded the dataset (marketing_campaign.csv) and inspected rows, columns, and data types.
+
+Handled missing values — filled missing Income values using the median.
+
+Removed duplicate rows to ensure data integrity.
+
+Standardized text columns like Education and Marital_Status.
+
+Converted date column (Dt_Customer) to proper datetime format.
+
+Renamed all columns into snake_case for consistency and easier access.
+
+Verified data types and confirmed dataset readiness for analysis.
+
+💾 Output Files
+
+Cleaned_Marketing_Data.csv → Final cleaned dataset
+
+Cleaning_Script.ipynb → Jupyter notebook/script used for cleaning
+
+✅ Final Status
+
+✔ Data Cleaning Completed Successfully
