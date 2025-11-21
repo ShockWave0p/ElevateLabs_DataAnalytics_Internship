@@ -1,0 +1,78 @@
+1. SELECT
+
+SELECT *
+FROM sales_data
+LIMIT 20;
+
+2. EXTRACT
+
+SELECT 
+    date,
+    EXTRACT(YEAR FROM date) AS year,
+    EXTRACT(MONTH FROM date) AS month
+FROM sales_data
+LIMIT 20;
+
+3. AGGREGATE FUNCTIONS
+
+SELECT
+    EXTRACT(YEAR FROM date)  AS year,
+    EXTRACT(MONTH FROM date) AS month,
+    SUM(order_value_eur)     AS monthly_revenue,
+    COUNT(DISTINCT order_id) AS monthly_order_volume
+FROM sales_data
+GROUP BY
+    EXTRACT(YEAR FROM date),
+    EXTRACT(MONTH FROM date)
+ORDER BY
+    year,
+    month;
+
+4. SORTING
+
+SELECT
+    EXTRACT(YEAR FROM date)  AS year,
+    EXTRACT(MONTH FROM date) AS month,
+    SUM(order_value_eur)     AS monthly_revenue,
+    COUNT(DISTINCT order_id) AS monthly_order_volume
+FROM sales_data
+GROUP BY
+    EXTRACT(YEAR FROM date),
+    EXTRACT(MONTH FROM date)
+ORDER BY
+    year DESC,
+    month DESC;
+
+5. LIMIT
+
+SELECT
+    EXTRACT(YEAR FROM date)  AS year,
+    EXTRACT(MONTH FROM date) AS month,
+    SUM(order_value_eur)     AS monthly_revenue,
+    COUNT(DISTINCT order_id) AS monthly_order_volume
+FROM sales_data
+GROUP BY
+    EXTRACT(YEAR FROM date),
+    EXTRACT(MONTH FROM date)
+ORDER BY
+    year DESC,
+    month DESC
+LIMIT 6;
+
+
+6. VIEW
+
+CREATE VIEW monthly_sales_trend AS
+SELECT
+    DATE_TRUNC('month', date) AS month_start,
+    EXTRACT(YEAR FROM date)   AS year,
+    EXTRACT(MONTH FROM date)  AS month,
+    SUM(order_value_eur)      AS monthly_revenue,
+    COUNT(DISTINCT order_id)  AS monthly_order_volume
+FROM sales_data
+GROUP BY
+    month_start, year, month
+ORDER BY
+    month_start;
+
+SELECT * FROM monthly_sales_trend;
