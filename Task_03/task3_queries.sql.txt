@@ -1,0 +1,164 @@
+
+
+
+   1. SELECT – Preview the dataset
+
+SELECT *
+FROM retail_data
+LIMIT 20;
+
+
+
+
+   2. WHERE – Filter rows based on conditions
+
+SELECT *
+FROM retail_data
+WHERE country = 'United Kingdom'
+  AND quantity > 10
+LIMIT 20;
+
+
+
+
+   3. AGGREGATE FUNCTIONS – Basic summary statistics
+-- Count rows, null values, and zero-price entries
+SELECT 
+    COUNT(*) AS total_rows,
+    SUM(CASE WHEN customer_id IS NULL THEN 1 END) AS null_customers,
+    SUM(CASE WHEN description IS NULL THEN 1 END) AS null_description,
+    SUM(CASE WHEN price = 0 THEN 1 END) AS zero_price_rows
+FROM retail_data;
+
+-- Date range (MIN & MAX)
+SELECT
+    MIN(invoice_date) AS start_date,
+    MAX(invoice_date) AS end_date
+FROM retail_data;
+
+
+
+   4. GROUP BY – Revenue per country
+
+SELECT 
+    country,
+    ROUND(SUM(quantity * price), 2) AS revenue
+FROM retail_data
+GROUP BY country
+ORDER BY revenue DESC;
+
+
+
+
+   5. SUBQUERY – Top 5 highest spending customers
+
+SELECT customer_id, total_spent
+FROM (
+    SELECT 
+        customer_id,
+        SUM(quantity * price) AS total_spent
+    FROM retail_data
+    WHERE customer_id IS NOT NULL
+    GROUP BY customer_id
+) AS t
+ORDER BY total_spent DESC
+LIMIT 5;
+
+
+
+
+   6. JOINS – Create lookup table + join with main dataset
+
+-- Create product category lookup table
+CREATE TABLE product_category (
+    stock_code VARCHAR(20),
+    category   VARCHAR(50)
+);
+
+-- Insert sample categories
+INSERT INTO product_category (stock_code, category) VALUES
+('85099B', 'Home Decor'),
+('22386',  'Kitchen'),
+('84029E', 'Toys'),
+('84879',  'Cosmetics');
+
+-- INNER JOIN
+SELECT 
+    r.stock_code,
+    r.description,
+    r.quantity,
+    r.price,
+    p.category
+FROM retail_data r
+INNER JOIN product_category p
+    ON r.stock_code = p.stock_code
+LIMIT 20;
+
+-- LEFT JOIN
+SELECT 
+    r.stock_code,
+    r.description,
+    r.quantity,
+    r.price,
+    p.category
+FROM retail_data r
+LEFT JOIN product_category p
+    ON r.stock_code = p.stock_code
+LIMIT 20;
+
+-- RIGHT JOIN
+SELECT 
+    r.stock_code,
+    r.description,
+    r.quantity,
+    r.price,
+    p.category
+FROM retail_data r
+RIGHT JOIN product_category p
+    ON r.stock_code = p.stock_code
+LIMIT 20;
+
+
+
+
+   7. VIEWS – Monthly revenue & Revenue by country
+
+-- Monthly revenue view
+CREATE VIEW monthly_revenue AS
+SELECT 
+    DATE_TRUNC('month', invoice_date) AS month,
+    SUM(quantity * price) AS revenue
+FROM retail_data
+GROUP BY month
+ORDER BY month;
+
+-- Use the view
+SELECT * FROM monthly_revenue;
+
+-- Country revenue view
+CREATE VIEW revenue_by_country AS
+SELECT 
+    country,
+    SUM(quantity * price) AS revenue
+FROM retail_data
+GROUP BY country
+ORDER BY revenue DESC;
+
+-- Use the view
+SELECT * FROM revenue_by_country;
+
+
+
+
+   8. INDEXES – Query performance optimization
+
+
+CREATE INDEX idx_country ON retail_data(country);
+CREATE INDEX idx_invoice_date ON retail_data(invoice_date);
+CREATE INDEX idx_customer ON retail_data(customer_id);
+
+
+
+
+   END OF FILE
+
